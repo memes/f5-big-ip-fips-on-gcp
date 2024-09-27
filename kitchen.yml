@@ -1,0 +1,115 @@
+<%
+require 'json'
+harness_outputs = JSON.load_file("#{__dir__}/test/setup/harness.json")
+%>
+---
+driver:
+  name: gce
+  project: <%= harness_outputs['project'] %>
+  image_project: f5-7626-networks-public
+  zone: <%= harness_outputs['region'] %>-a
+  region: <%= harness_outputs['region'] %>
+  # labels:
+  #   purpose: 'automated-testing'
+  #   repo: 'memes/f5-big-ip-fips-on-gcp'
+  #   driver: kitchen
+  machine_type: n1-standard-4
+  network: <%= harness_outputs['network'] %>
+  subnet: <%= harness_outputs['subnet'] %>
+  service_account_name: <%= harness_outputs['service_account'] %>
+  service_account_scopes:
+    - https://www.googleapis.com/auth/cloud-platform
+  use_private_ip: false
+  disks:
+    disk0:
+      disk_size: 100
+      disk_type: pd-standard
+  metadata:
+    ssh-keys: |
+      test-admin:<%= harness_outputs['ssh_public_key'] %>
+    startup-script: |
+      #!/bin/bash
+      exec 1>&-
+      exec 1>/dev/ttyS0
+      exec 2>&1
+      set -ex
+      . /usr/lib/bigstart/bigip-ready-functions
+      wait_bigip_ready
+      echo "Minimal setup for kitchen testing"
+      systemctl stop sshd
+      printf '<%= harness_outputs['password'] %>\n<%= harness_outputs['password'] %>\n' | tmsh create auth user test-admin partition-access add { all-partitions { role admin } } shell bash prompt-for-password
+      chage -d $(date -d -1days +%Y-%m-%d) -E -1 test-admin
+      mkdir -p ~test-admin/.ssh
+      echo '<%= harness_outputs['ssh_public_key'] %>' >> ~test-admin/.ssh/authorized_keys
+      chmod 0700 ~test-admin/.ssh
+      chmod 0644 ~test-admin/.ssh/authorized_keys
+      chown -R $(id -u test-admin):$(id -g test-admin) ~test-admin/.ssh
+      systemctl start sshd
+      echo "Ready for testing"
+provisioner:
+  name: shell
+  command: tmsh show /sys version
+
+verifier:
+  name: inspec
+  sudo: false
+
+transport:
+  name: ssh
+  username: test-admin
+  connection_retries: 10
+  connection_retry_sleep: 10
+  ssh_key: <%= harness_outputs['ssh_private_key_path'] %>
+
+platforms:
+  - name: best-plus-16-1-4-1 # oldest available 16-1-4.
+    driver:
+      image_name: f5-bigip-16-1-4-1-0-53-5-payg-best-plus-25mbps-231026120516
+  - name: best-plus-17-1-1-4
+    driver:
+      image_name: f5-bigip-17-1-1-4-0-0-9-payg-best-plus-25mbps-240902171535
+  - name: best-plus-16-1-5
+    driver:
+      image_name: f5-bigip-16-1-5-0-0-3-payg-best-plus-25mbps-240628082740
+    transport:
+      password: '<%= harness_outputs['password'] %>'
+  - name: best-plus-15-1-10-5
+    driver:
+      image_name: f5-bigip-15-1-10-5-0-0-10-payg-best-plus-25mbps-240911151049
+  - name: best-17-1-1-4
+    driver:
+      image_name: f5-bigip-17-1-1-4-0-0-9-payg-best-25mbps-240902165628
+  - name: best-16-1-5
+    driver:
+      image_name: f5-bigip-16-1-5-0-0-3-payg-best-25mbps-240628080740
+  - name: best-15-1-10-5
+    driver:
+      image_name: f5-bigip-15-1-10-5-0-0-10-payg-best-25mbps-240911145052
+  - name: better-17-1-1-4
+    driver:
+      image_name: f5-bigip-17-1-1-4-0-0-9-payg-better-25mbps-240902164628
+  - name: better-16-1-5
+    driver:
+      image_name: f5-bigip-16-1-5-0-0-3-payg-better-25mbps-240628075749
+  - name: better-15-1-10-5
+    driver:
+      image_name: f5-bigip-15-1-10-5-0-0-10-payg-better-25mbps-240911144115
+  - name: good-17-1-1-4
+    driver:
+      image_name: f5-bigip-17-1-1-4-0-0-9-payg-good-25mbps-240902164346
+  - name: good-16-1-5
+    driver:
+      image_name: f5-bigip-16-1-5-0-0-3-payg-good-25mbps-240628075357
+  - name: good-15-1-10-5
+    driver:
+      image_name: f5-bigip-15-1-10-5-0-0-10-payg-good-25mbps-240911143654
+
+suites:
+  - name: fips-enabled
+    excludes:
+      - /^best-[^p]/
+      - /^better-/
+      - /^good-/
+  - name: fips-disabled
+    excludes:
+      - /^best-plus-/

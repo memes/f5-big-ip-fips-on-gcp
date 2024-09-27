@@ -1,12 +1,12 @@
-# TODO: @memes - remove unused plugins for project
----
 # spell-checker:disable
+---
 repos:
   - repo: https://github.com/adrienverge/yamllint
     rev: v1.33.0
     hooks:
       - id: yamllint
         files: \.(yml|yaml|talismanrc)$
+        exclude: 'kitchen\.yml$'
         types:
           - file
           - yaml
@@ -18,6 +18,9 @@ repos:
       - id: terraform_docs
         args:
           - '--args=--sort-by=required --hide=providers'
+      - id: terraform_tflint
+        args:
+          - --args=--module
   - repo: https://github.com/compilerla/conventional-pre-commit
     rev: v3.1.0
     hooks:
@@ -28,10 +31,6 @@ repos:
     rev: v1.3.5
     hooks:
       - id: rubocop
-  - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.9.0.6
-    hooks:
-      - id: shellcheck
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
@@ -40,13 +39,12 @@ repos:
       - id: check-toml
       - id: detect-private-key
       - id: end-of-file-fixer
-      # TODO: @memes - remove/modify if push to main is allowed
       - id: no-commit-to-branch
         args:
           - -b
           - main
       - id: trailing-whitespace
   - repo: https://github.com/thoughtworks/talisman
-    rev: v1.31.0
+    rev: v1.32.0
     hooks:
       - id: talisman-commit

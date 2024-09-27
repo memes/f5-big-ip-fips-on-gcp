@@ -11,4 +11,8 @@ fileignoreconfig:
 - filename: README.md
   ignore_detectors:
   - filecontent
+- filename: test/setup/main.tf
+  checksum: 411e501c03fbc9dc185d22d441eb1393d1ab6941ca10753af79f6a81cfbc8c9d
+- filename: kitchen.yml
+  checksum: 76cb2e25f61afd860971c82fd6da0b1c1fb2075c151c12b11a44d603443cde50
 version: "1.0"

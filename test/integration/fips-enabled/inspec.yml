@@ -1,0 +1,6 @@
+---
+name: fips-enabled
+title: Verify FIPS 140 is enabled on a BIG-IP VE
+maintainer: Matthew Emes <memes@matthewemes.com>
+license: Apache-2.0
+version: 0.1.0

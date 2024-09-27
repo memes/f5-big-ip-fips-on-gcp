@@ -3,9 +3,10 @@
 .direnv
 .tool-versions
 
-# Ignore Ruby
+# Ignore Ruby and kitchen
 .bundle
 Gemfile.lock
+.kitchen
 
 # Ignore Terraform state and automatic var files - except examples
 .terraform
