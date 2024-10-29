@@ -2,7 +2,7 @@
 ---
 repos:
   - repo: https://github.com/adrienverge/yamllint
-    rev: v1.33.0
+    rev: v1.35.1
     hooks:
       - id: yamllint
         files: \.(yml|yaml|talismanrc)$
@@ -12,7 +12,7 @@ repos:
           - yaml
         entry: yamllint --strict
   - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.86.0
+    rev: v1.96.1
     hooks:
       - id: terraform_fmt
       - id: terraform_docs
@@ -22,17 +22,17 @@ repos:
         args:
           - --args=--module
   - repo: https://github.com/compilerla/conventional-pre-commit
-    rev: v3.1.0
+    rev: v3.6.0
     hooks:
       - id: conventional-pre-commit
         stages:
           - commit-msg
   - repo: https://github.com/mattlqx/pre-commit-ruby
-    rev: v1.3.5
+    rev: v1.3.6
     hooks:
       - id: rubocop
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v5.0.0
     hooks:
       - id: check-executables-have-shebangs
       - id: check-merge-conflict
