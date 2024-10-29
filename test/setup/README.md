@@ -24,7 +24,7 @@ admin_source_cidrs = [
 ```
 
 <!-- markdownlint-disable MD033 MD034 -->
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
@@ -69,5 +69,5 @@ admin_source_cidrs = [
 ## Outputs
 
 No outputs.
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- END_TF_DOCS -->
 <!-- markdownlint-enable MD033 MD034 -->
