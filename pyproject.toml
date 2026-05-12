@@ -1,0 +1,67 @@
+[project]
+name = "f5-big-ip-fips-on-gcp"
+version = "0.0.1"
+description = "Test harness for F5 BIG-IP FIPS testing"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "google-cloud-compute>=1.47.0",
+    "google-cloud-iam>=2.23.0",
+    "pytest-cov>=7.1.0",
+    "pytest-xdist>=3.8.0",
+]
+
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.6.0",
+    "ruff>=0.15.12",
+    "ty>=0.0.33",
+]
+
+[tool.ruff]
+line-length = 120
+indent-width = 4
+target-version = "py313"
+
+[tool.ruff.lint]
+ignore = []
+select = ["ALL"]
+extend-select = ["I"]
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**/*" = ["S", "INP", "PLR0913", "FBT001", "FBT002"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+
+[tool.coverage.paths]
+source = ["tests"]
+
+[tool.coverage.report]
+show_missing = true
+
+[tool.coverage.run]
+branch = true
+
+[tool.pytest]
+addopts = [
+    "--import-mode=importlib",
+    "--cov=tests",
+    "--cov-report=term-missing",
+    "--numprocesses=auto",
+    "--dist=loadfile",
+]
+log_cli = true
+log_cli_level = "WARNING"
+log_cli_format = "%(asctime)s - %(levelname)s:%(name)s:%s(message)"
+log_cli_date_format = "%Y-%m-%dT%H:%M:%S%z"
+testpaths = ["tests"]
+filterwarnings = [
+    "error",
+    "ignore::urllib3.exceptions.InsecureRequestWarning",
+]
